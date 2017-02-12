@@ -1,0 +1,87 @@
+<html>
+<head>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
+  <style>
+    body{
+      margin: 10px;
+    }
+  </style>
+  <script>
+
+    $(function(){
+      console.log('Page loaded');
+      
+      var userId = "<%=userId%>";
+      console.log('User ID', userId);
+      
+      var source   = $("#personality-template").html();
+      var template = Handlebars.compile(source);     
+      
+      Handlebars.registerHelper('percent', function(percentile) {
+        return Math.round(percentile * 100) + '%';
+      });
+
+      $.ajax('profile/' + userId).done(function(data){
+        console.log(data);
+        $('#loadingMsg').hide();
+        var html = template(data);
+        $('#personality').html(html);
+      }).fail(function(){
+        $('#loadingMsg').html('Error profiling personality');
+      });
+    });
+    
+  </script>
+</head>
+<body>
+  <div id="loadingMsg">
+    Loading...
+  </div>  
+  
+  <div id="personality">
+    
+    
+  </div>
+  
+  
+</body>
+
+
+<script id="personality-template" type="text/x-handlebars-template">
+  <h4>Personality</h4>
+  {{#each personality}}
+    <div>{{name}}</div>
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{percent percentile}};">
+        {{percent percentile}}
+      </div>
+    </div>    
+  {{/each}}
+  
+  <h4>Consumer Needs</h4>
+  {{#each needs}}
+    <div>{{name}}</div>
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{percent percentile}};">
+        {{percent percentile}}
+      </div>
+    </div>    
+  {{/each}}
+  
+  <h4>Values</h4>
+  {{#each values}}
+    <div>{{name}}</div>
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{percent percentile}};">
+        {{percent percentile}}
+      </div>
+    </div>    
+  {{/each}}
+  
+  
+</script>
+
+</html>
